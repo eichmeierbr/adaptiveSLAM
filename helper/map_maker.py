@@ -1,0 +1,16 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
+
+grid = np.zeros([800,800])
+
+# Remove all hallways
+# img=mpimg.imread('building_with_rooms.png')
+img=mpimg.imread('maps/sweden_map.png')
+img = 1-img[:,:,0]
+
+plt.imshow(img, cmap='Greys')
+plt.show()
+
+np.savetxt('sweden_map.csv', grid, delimiter=',')

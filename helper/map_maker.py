@@ -13,4 +13,4 @@ img = 1-img[:,:,0]
 plt.imshow(img, cmap='Greys')
 plt.show()
 
-np.savetxt('buliding_easy.csv', img, delimiter=',')
+# np.savetxt('buliding_easy.csv', img, delimiter=',')

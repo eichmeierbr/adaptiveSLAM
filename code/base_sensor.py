@@ -1,14 +1,16 @@
 import numpy as np
 
-class base_sensor:
-    def __init__(self, local=True, in_map=np.zeros([1000,1000]), P_est=0.1, P_des=0.1, freq=0.01):
-        self._local = True
+class Base_sensor:
+    def __init__(self, local=True, in_map=np.zeros([1000,1000]), P_est=0.1, P_des=0.1, dim=2, freq=0.01):
+        self._local = False
         self.__P_map = np.ones_like(in_map) * P_des
-        self._P_est = P_est
+        self._P_est = np.ones(dim)*P_est
         self._freq  = freq
         self._last_meas = -10
+        self._dim = dim
 
-    def getMeasure(self, map, robot):
+
+    def getMeasure(self, env, robot):
         """
         Retrieve simulated sensor measurement from the robot. For now, return zeros.
     
@@ -17,5 +19,7 @@ class base_sensor:
         \param zt       Sensor measurement
         """
 
-        zt = np.zeros(2)
+        X_t = robot._true_pose
+        P_true =self.__P_map[X_t[0], X_t[1]]
+        zt = X_t + np.random.normal(P_true)
         return zt

@@ -5,7 +5,7 @@ from base_sensor import *
 from feature_sensor import *
 from robot import *
 from control import *
-
+from path import *
 
 from math import log
 
@@ -26,47 +26,6 @@ def display_map(env, robot, dt, sensor):
     plt.pause(dt)
     plt.clf()
 
-    
-
-def get_path(waypoints,step_size=10):
-
-    ##np.arange has an error with floating point error
-    #solution is to use linspace but might take more work
-    #also path is returned as in as the smallest value
-
-    temp_correction_for_error = 0.01*step_size
-
-    pathx = [waypoints[0,0]]
-    pathy = [waypoints[0,1]]
-
-    for i in range(len(waypoints)-1):
-        lx = len(pathx)
-        ly = len(pathy)
-
-        if pathx[lx-1]<waypoints[i+1,0]:
-            pathx = np.append(pathx,np.arange(pathx[lx-1],waypoints[i+1,0]+temp_correction_for_error,step_size))
-        else:
-            pathx = np.append(pathx,np.flip(np.arange(waypoints[i+1,0],pathx[lx-1]+temp_correction_for_error,step_size)))
-
-        if pathy[ly-1]<waypoints[i+1,1]:
-            pathy = np.append(pathy,np.arange(pathy[ly-1],waypoints[i+1,1]+temp_correction_for_error,step_size))
-        else:
-            pathy = np.append(pathy,np.flip(np.arange(waypoints[i+1,1],pathy[ly-1]+temp_correction_for_error,step_size)))
-        lx = len(pathx)
-        ly = len(pathy)
-
-        if lx>ly:
-            pathy = np.append(pathy,np.ones((lx-ly,1))*pathy[ly-1])
-
-        if ly>lx:
-            pathx = np.append(pathx,np.ones((ly-lx,1))*pathx[lx-1])
-
-    path = np.zeros((len(pathx),2))
-    path[:,0] = pathx
-    path[:,1] = pathy
-
-    return path
-
 
 if __name__ == "__main__":
     
@@ -81,7 +40,7 @@ if __name__ == "__main__":
     ## Initialize Robot
     diff_control = Diff_movement()
     abs_control = Abs_movement()
-    robot = Robot(init_pose, env, abs_control)
+    robot = Robot(init_pose, env, diff_control)
 
     ## Initialize Sensors
     sensors = []
@@ -95,13 +54,13 @@ if __name__ == "__main__":
 
     waypoints = np.array([[100,100,100,350,500,500,500,350,100,100,100,250],
                        [100,200,300,300,300,200,100,100,100,200,300,300]]).T
-
-    path = get_path(waypoints)
+    global_path = get_path(waypoints)
+    local_path = convert_2_local(global_path)
 
     display_map(env, robot, dt, sensors)
 
     ## For time duration (Or all actions)
-    for act in path:
+    for act in local_path:
 
         ## Perform motion with robot
         robot.move(act)

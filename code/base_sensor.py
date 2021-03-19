@@ -22,6 +22,6 @@ class Base_sensor:
         """
 
         X_t = robot._true_pose
-        P_true =self.__P_map[X_t[0], X_t[1]]
+        P_true =self.__P_map[int(X_t[0]), int(X_t[1])]
         zt = X_t + np.random.normal(P_true)
         return zt

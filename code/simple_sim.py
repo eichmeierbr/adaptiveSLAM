@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from base_sensor import *
 from feature_sensor import *
 from robot import *
-from control import *
+from odometry import *
 from path import *
 
 from math import log
@@ -61,14 +61,18 @@ if __name__ == "__main__":
 
     ## For time duration (Or all actions)
     for act in local_path:
+        previous_true_pose = robot._true_pose[:]
+        previous_est_pose  = robot._est_pose[:]
 
         ## Perform motion with robot
         robot.move(act)
 
         ## Obtain new sensor measurements
         zs = []
+        zs.append(robot._odom.get_measure())  ## Add odometry measurement
         for sens in sensors:
-            zs.append(sens.getMeasure(env, robot))
+            zs.append(sens.getMeasure(env, robot))     ## Add each sensor measurement
+
 
 
         ## Do SLAM

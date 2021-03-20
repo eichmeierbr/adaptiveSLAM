@@ -1,5 +1,5 @@
 import numpy as np
-from control import *
+from odometry import *
 
 
 class Robot:

@@ -11,6 +11,9 @@ class Robot:
         self._true_path = [self._true_pose]
         self._est_path  = [self._true_pose]
 
+        # Init current ut
+        self_u_t = init_pose[:]
+
         # Init belief map
         self._belief_map = np.zeros_like(env)
 
@@ -39,7 +42,7 @@ class Robot:
     
         \param ut         Control input
         """
-
+        self._u_t = ut.copy()
         ## Call odometry function to get the new poses
         self._true_pose, self._est_pose = self._odom.take_step(self._true_pose, self._est_pose, ut)
 

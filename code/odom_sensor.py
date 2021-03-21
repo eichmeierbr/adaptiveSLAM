@@ -1,6 +1,6 @@
-import numpy as np
-
-class Base_sensor:
+# odom Sensor
+from base_sensor import *
+class odometry_sensor(Base_sensor):
     def __init__(self, local=True, in_map=np.zeros([1000,1000]), P_est=0.1, P_des=0.1, dim=2, freq=0.01):
         self._local = False
         self.__P_map = np.ones_like(in_map) * P_des
@@ -8,10 +8,16 @@ class Base_sensor:
         self._freq  = freq
         self._last_meas = -10
         self._dim = dim
-        self._sensor = None 
+        self._sensor = "odometry"
+
+
+    def set_values(self,feature):
+        self.features = feature
+
 
     def get_values(self):
-        return 
+        return self.features
+
 
 
     def getMeasure(self, env, robot):
@@ -21,16 +27,10 @@ class Base_sensor:
         \param robot    Robot object containing state information
         \param zt       Sensor measurement
         """
-
-        X_t = robot._true_pose
-        P_true =self.__P_map[int(X_t[0]), int(X_t[1])]
-        zt = X_t + np.random.normal(P_true)
+        #TODO: change to sensor values we need
+        
+        (mean,stddev) = self.getSensorNoise(env, robot)
+        X_t_est = robot._est_pose
+        u_t_est = robot._u_t
+        zt = X_t_est + u_t_est + np.random.normal(mean, stddev, (2,1))
         return zt
-    
-    def getSensorNoise(self, env, robot):
-        """
-        Retrieve simulated sensor covariance from envorinment. For now, return zeros.
-        \param env      Map of the robot's environment
-        \param robot    Robot object containing state information
-        """
-        return env.getSensorNoise(self._sensor,robot)

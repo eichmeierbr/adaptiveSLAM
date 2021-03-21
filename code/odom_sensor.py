@@ -10,20 +10,13 @@ class odometry_sensor(Base_sensor):
         self._dim = dim
         self._sensor = "odometry"
 
-
-    def set_values(self,feature):
-        self.features = feature
-
-
     def get_values(self):
-        return self.features
-
-
+        return 
 
     def getMeasure(self, env, robot):
         """
         Retrieve simulated sensor measurement from the robot. For now, return zeros.
-        \param map      Map of the robot's environment
+        \param env      Map of the robot's environment
         \param robot    Robot object containing state information
         \param zt       Sensor measurement
         """
@@ -31,6 +24,6 @@ class odometry_sensor(Base_sensor):
         
         (mean,stddev) = self.getSensorNoise(env, robot)
         X_t_est = robot._est_pose
-        u_t_est = robot._u_t
-        zt = X_t_est + u_t_est + np.random.normal(mean, stddev, (2,1))
+        u_t_est = robot._u_t_commanded
+        zt = X_t_est + u_t_est + np.random.normal(mean, stddev, robot._est_pose.shape)
         return zt

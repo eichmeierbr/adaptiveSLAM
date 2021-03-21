@@ -8,6 +8,7 @@ class Base_sensor:
         self._freq  = freq
         self._last_meas = -10
         self._dim = dim
+        self._sensor = None 
 
     def get_values(self):
         return 
@@ -25,3 +26,11 @@ class Base_sensor:
         P_true =self.__P_map[int(X_t[0]), int(X_t[1])]
         zt = X_t + np.random.normal(P_true)
         return zt
+    
+    def getCovariance(self, env, robot):
+        """
+        Retrieve simulated sensor covariance from envorinment. For now, return zeros.
+        \param env      Map of the robot's environment
+        \param robot    Robot object containing state information
+        """
+        return env.getSensorNoise(self._sensor,robot)

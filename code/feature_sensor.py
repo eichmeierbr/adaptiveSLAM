@@ -10,6 +10,7 @@ class feature_sensor(Base_sensor):
         self._freq  = freq
         self._last_meas = -10
         self._dim = dim
+        self._sensor = "feature"
 
         self.features = np.array([[300,200],[200,150],[350,150]])
 

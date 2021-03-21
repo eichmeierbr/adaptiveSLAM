@@ -6,6 +6,7 @@ from feature_sensor import *
 from robot import *
 from odometry import *
 from path import *
+from enviornment import *
 
 from math import log
 
@@ -33,10 +34,6 @@ if __name__ == "__main__":
     t   = 0.0
     init_pose = np.array([100,100])
 
-    ## Initialize Map
-    env = np.loadtxt('../maps/empty_map.csv', delimiter=',')
-
-
     ## Initialize Robot
     diff_control = Diff_movement()
     abs_control = Abs_movement()
@@ -46,6 +43,10 @@ if __name__ == "__main__":
     sensors = []
     sensors.append(Base_sensor())
     sensors.append(feature_sensor())
+
+    ## Initialize Map
+    map_name = "../maps/empty_map.csv"
+    env = Enviornment(sensors,map_name)
 
     ## Initailze Path
     #this is for loca control vs abs

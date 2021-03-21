@@ -1,6 +1,9 @@
 import numpy as np
 
 class Base_sensor:
+    """
+    What are P_map P_est???
+    """
     def __init__(self, local=True, in_map=np.zeros([1000,1000]), P_est=0.1, P_des=0.1, dim=2, freq=0.01):
         self._local = False
         self.__P_map = np.ones_like(in_map) * P_des

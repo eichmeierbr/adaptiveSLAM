@@ -51,24 +51,24 @@ class feature_sensor(Base_sensor):
         \param zt       Sensor measurement
         """
         #TODO: change to sensor values we need
-        # X_t = robot._true_pose
-        # P_true =self.__P_map[int(X_t[0]), int(X_t[1])]
-        # zt = X_t + np.random.normal(P_true)
+        X_t = robot._true_pose
+        P_true =self.__P_map[int(X_t[0]), int(X_t[1])]
+        zt = X_t + np.random.normal(P_true)
+        return zt
 
-
-        (mean,stddev) = self.getSensorNoise(env, robot)
-        state_size = len(robot._est_pose)
-        k = len(self.features)
-        features = np.flatten(self.features)
-        X = np.concatenate((robot._true_pose.copy(),features)) #change to est for slam rather than measure
-        X_pre = X.copy()
-        # du = robot._u_t_commanded
-        # control = np.array([np.sqrt(du[0]**2+du[1]**2)[0],du[2]])
-        measure_dxdy = np.zeros(2*k,1)
-        for i in range(state_size,len(X_pre),2):
-            measure_dxdy[i] = X_pre[i+state_size]-X_pre[0] + np.random.normal(mean,stddev,(1,1))
-            measure_dxdy[i+1] = X_pre[i+1+state_size]-X_pre[1] + np.random.normal(mean,stddev,(1,1))
-        return measure_dxdy #returns measurement to each landmark get estimated state in slam?
+        # (mean,stddev) = self.getSensorNoise(env, robot)
+        # state_size = len(robot._est_pose)
+        # k = len(self.features)
+        # features = np.flatten(self.features)
+        # X = np.concatenate((robot._true_pose.copy(),features)) #change to est for slam rather than measure
+        # X_pre = X.copy()
+        # # du = robot._u_t_commanded
+        # # control = np.array([np.sqrt(du[0]**2+du[1]**2)[0],du[2]])
+        # measure_dxdy = np.zeros(2*k,1)
+        # for i in range(state_size,len(X_pre),2):
+        #     measure_dxdy[i] = X_pre[i+state_size]-X_pre[0] + np.random.normal(mean,stddev,(1,1))
+        #     measure_dxdy[i+1] = X_pre[i+1+state_size]-X_pre[1] + np.random.normal(mean,stddev,(1,1))
+        # return measure_dxdy #returns measurement to each landmark get estimated state in slam?
 
         # # my hw2 if we need to send an xy estimated pose - we will need to run a mini slam to estimate pose for this sensor
         # X_pre[0:state_size] = X[0:state_size]+du

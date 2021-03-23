@@ -7,11 +7,12 @@ from robot import *
 from odometry import *
 from path import *
 from enviornment import *
+from pathlib import Path
 
 from math import log
 
 def display_map(env, robot, dt, sensor):
-    plt.imshow(env, cmap='Greys')
+    plt.imshow(env.map, cmap='Greys')
     plt.scatter(robot._true_pose[0], robot._true_pose[1])
     plt.scatter(robot._est_pose[0], robot._est_pose[1])
 
@@ -34,19 +35,19 @@ if __name__ == "__main__":
     t   = 0.0
     init_pose = np.array([100,100])
 
-    ## Initialize Robot
-    diff_control = Diff_movement()
-    abs_control = Abs_movement()
-    robot = Robot(init_pose, env, diff_control)
-
     ## Initialize Sensors
     sensors = []
     sensors.append(Base_sensor())
     sensors.append(feature_sensor())
 
     ## Initialize Map
-    map_name = "../maps/empty_map.csv"
+    map_name = Path("maps/empty_map.csv")
     env = Enviornment(sensors,map_name)
+
+    ## Initialize Robot
+    diff_control = Diff_movement()
+    abs_control = Abs_movement()
+    robot = Robot(init_pose, env, diff_control)
 
     ## Initailze Path
     #this is for loca control vs abs

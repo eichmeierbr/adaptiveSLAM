@@ -14,8 +14,8 @@ class feature_sensor(Base_sensor):
 
         self.features = np.array([[300,200],[200,150],[350,150]])
         k = len(self.features)
-        self.P_pre = np.block([[np.zeros((3, 3)), np.zeros((3, 2 * k))],
-                               [np.zeros((2 * k, 3)), np.zeros((3, 3))]])
+        # self.P_pre = np.block([[np.zeros((3, 3)), np.zeros((3, 2 * k))],
+        #                        [np.zeros((2 * k, 3)), np.zeros((3, 3))]])
 
     def set_values(self,feature):
         self.features = feature

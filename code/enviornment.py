@@ -5,7 +5,8 @@ class Enviornment():
         self.sensorNoise = dict()
         for sensor in sensors:
             if not sensor._sensor == None:
-                filename = map_name+'_'+sensor._sensor
+                print('need sensor region file')
+                filename = map_name#+'_'+sensor._sensor
                 self.sensorNoise[sensor._sensor] = np.loadtxt(filename, delimiter=',')
     
     def getSensorNoise(self,sensor,robot):

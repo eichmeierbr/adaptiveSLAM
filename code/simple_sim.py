@@ -41,8 +41,12 @@ if __name__ == "__main__":
     sensors.append(feature_sensor())
 
     ## Initialize Map
-    map_name = Path("maps/empty_map.csv")
-    env = Enviornment(sensors,map_name)
+    emptymap = Path("../maps/empty_map.csv")
+    building_easy = Path("../maps/building_easy.csv")
+    sweden = Path("../maps/sweden_map.csv")
+    building = Path("../maps/building.csv")
+
+    env = Enviornment(sensors,emptymap)
 
     ## Initialize Robot
     diff_control = Diff_movement()
@@ -50,13 +54,20 @@ if __name__ == "__main__":
     robot = Robot(init_pose, env, diff_control)
 
     ## Initailze Path
-    #this is for loca control vs abs
-    # path = np.array([[0,0,0,250,150,0,0,-150,-250,0,0,150],
-    #                  [0,100,100,0,0,-100,-100,0,0,100,100,0]]).T
 
-    waypoints = np.array([[100,100,100,350,500,500,500,350,100,100,100,250],
-                       [100,200,300,300,300,200,100,100,100,200,300,300]]).T
-    global_path = get_path(waypoints)
+    emptymap_waypoints = np.array([[100,100,500,500,350,100],
+                                   [100,300,300,100,100,100]]).T
+    # use step_size ~ 1 if you use complex
+    emptymap_complex = np.multiply(np.array([[100, 138.0, 176.0, 191.5, 207.0, 214.0, 221.0, 232.0, 243.0, 257.0, 271.0, 285.5, 300.0, 314.5, 329.0, 343.0, 357.0, 368.0, 379.0, 385.5, 392.0, 392.0, 392.0, 385.5, 379.0, 368.0, 357.0, 339.5, 322.0, 300.0, 278.0, 260.5, 243.0, 232.0, 221.0, 214.0, 207.0, 191.5, 100],
+                                 [100, 134.0, 168.0, 169.5, 171.0, 157.0, 143.0, 132.0, 121.0, 114.0, 107.0, 104.5, 102.0, 104.5, 107.0, 114.0, 121.0, 132.0, 143.0, 160.5, 178.0, 200.0, 222.0, 239.5, 257.0, 268.0, 279.0, 285.5, 292.0, 292.0, 292.0, 285.5, 279.0, 268.0, 257.0, 243.0, 229.0, 205.5, 100]]).T,1.25)
+    building_easy_waypoints = np.array([[100,100,600,600,100,100],
+                                        [100,300,300,80 ,80 ,100]]).T
+    sweden_waypoints = np.array([[100,100,350,350,600,600,100,100],
+                                 [100,300,300,200,200,80 ,80 ,100]]).T   
+    building_waypoints = np.array([[100,100,240,240,400,400,400,100,100],
+                                   [100,200,200,300,300,350,300,300,100]]).T
+                    
+    global_path = get_path(emptymap_complex,step_size=10)
     local_path = convert_2_local(global_path)
 
     display_map(env, robot, dt, sensors)

@@ -1,6 +1,9 @@
 
 
 import numpy as np
+from enviornment import *
+from pathlib import Path
+import random
 
 def rolling_avg(path,num):
 
@@ -80,3 +83,49 @@ def convert_2_local(global_path):
 
 
     return local_path
+
+
+def random_features(env,num_features):
+    features = np.zeros((num_features,2))
+    i=0
+    shape = env.__getshape__()
+    while i<num_features:
+        rx = random.randint(0, shape[0]-1)
+        ry = random.randint(0, shape[1]-1)
+        val = env.__getitem__(rx,ry)
+        if env.__getitem__(rx,ry)<1:
+            features[i,0]=ry
+            features[i,1]=rx
+            i+=1
+
+    return features
+
+
+
+def select_world(sensors,num,num_features=100,step=10,smooth=True):
+    if num==1:
+        env_map = Path("../maps/empty_map.csv")
+        waypoints = np.multiply(np.array([[100, 138.0, 176.0, 191.5, 207.0, 214.0, 221.0, 232.0, 243.0, 257.0, 271.0, 285.5, 300.0, 314.5, 329.0, 343.0, 357.0, 368.0, 379.0, 385.5, 392.0, 392.0, 392.0, 385.5, 379.0, 368.0, 357.0, 339.5, 322.0, 300.0, 278.0, 260.5, 243.0, 232.0, 221.0, 214.0, 207.0, 191.5, 100],
+                                          [100, 134.0, 168.0, 169.5, 171.0, 157.0, 143.0, 132.0, 121.0, 114.0, 107.0, 104.5, 102.0, 104.5, 107.0, 114.0, 121.0, 132.0, 143.0, 160.5, 178.0, 200.0, 222.0, 239.5, 257.0, 268.0, 279.0, 285.5, 292.0, 292.0, 292.0, 285.5, 279.0, 268.0, 257.0, 243.0, 229.0, 205.5, 100]]).T,1.25)
+    elif num==2:
+        env_map = Path("../maps/building_easy.csv")
+        waypoints = np.array([[100,100,600,600,100,100],
+                              [100,300,300,80 ,80 ,100]]).T
+    elif num==3:
+        env_map = Path("../maps/sweden_map.csv")
+        waypoints = np.array([[100,100,350,350,600,600,100,100],
+                              [100,300,300,200,200,80 ,80 ,100]]).T   
+    elif num==4:
+        env_map = Path("../maps/building.csv")
+        waypoints = np.array([[100,100,240,240,400,400,400,100,100],
+                              [100,200,200,300,300,350,300,300,100]]).T
+    else:
+        env_map = Path("../maps/empty_map.csv")
+        waypoints = np.array([[100,100,500,500,350,100],
+                              [100,300,300,100,100,100]]).T
+
+    waypoints = get_path(waypoints,step_size=step,smooth=smooth)
+    waypoints = convert_2_local(waypoints)
+    env = Enviornment(sensors,env_map)
+    features = random_features(env,num_features)
+    return waypoints,env,features

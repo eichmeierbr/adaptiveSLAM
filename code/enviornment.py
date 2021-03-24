@@ -14,5 +14,8 @@ class Enviornment():
         res=self.sensorNoise[sensor._sensor][int(X_t[0]), int(X_t[1])]
         return res
     
-    def __getitem__(self,index):
-        return self.map[index]
+    def __getitem__(self,x,y):
+        return self.map[x,y]
+
+    def __getshape__(self):
+        return np.shape(self.map)

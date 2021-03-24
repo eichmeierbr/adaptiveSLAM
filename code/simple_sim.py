@@ -21,7 +21,7 @@ def display_map(env, robot, dt, sensor):
         if sensor_vals is None:
             continue
         else:
-            plt.scatter(sensor_vals[:,0], sensor_vals[:,1])
+            plt.scatter(sensor_vals[:,0], sensor_vals[:,1],s=0.6)
     
 
     plt.draw()
@@ -42,9 +42,9 @@ if __name__ == "__main__":
     sensors.append(Base_sensor())
     sensors.append(feature_sensor())
 
-    ## Initialize Map
+    ## Initialize Map and features
     local_path,env,features = select_world(sensors,4)
-    sensors[1].set_values(features)
+    sensors[1].set_values(features)  #alex, feel free to change this 
     
 
     ## Initialize Robot

@@ -67,7 +67,7 @@ if __name__ == "__main__":
     building_waypoints = np.array([[100,100,240,240,400,400,400,100,100],
                                    [100,200,200,300,300,350,300,300,100]]).T
                     
-    global_path = get_path(emptymap_complex,step_size=10)
+    global_path = get_path(emptymap_complex,step_size=10,smooth=True)
     local_path = convert_2_local(global_path)
 
     display_map(env, robot, dt, sensors)

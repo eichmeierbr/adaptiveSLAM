@@ -2,9 +2,26 @@
 
 import numpy as np
 
-    
+def rolling_avg(path,num):
 
-def get_path(waypoints,step_size=10):
+    for i in range(num):
+        pathx = [path[0,0]]
+        pathy = [path[0,1]]
+        for i in range(1,len(path)-1):
+            avg_x = (path[i-1,0]+path[i,0]+path[i+1,0])/3
+            avg_y = (path[i-1,1]+path[i,1]+path[i+1,1])/3
+
+            # pathx.append(path[i,0])
+            # pathy.append(path[i,1])
+
+            pathx.append(avg_x)
+            pathy.append(avg_y)
+        
+        path = np.array([pathx,pathy]).T
+
+    return path
+
+def get_path(waypoints,step_size=10,smooth=False):
 
     ##np.arange has an error with floating point error
     #solution is to use linspace but might take more work
@@ -40,6 +57,9 @@ def get_path(waypoints,step_size=10):
     path = np.zeros((len(pathx),2))
     path[:,0] = pathx
     path[:,1] = pathy
+
+    if smooth==True:
+        path = rolling_avg(path,3)
 
     return path
 

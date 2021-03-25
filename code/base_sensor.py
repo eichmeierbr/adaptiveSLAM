@@ -36,4 +36,4 @@ class Base_sensor:
         \param env      Map of the robot's environment
         \param robot    Robot object containing state information
         """
-        return env.getSensorNoise(self._sensor,robot)
+        return env.getSensorNoise(self,robot)

@@ -7,11 +7,17 @@ class GPS_sensor(Base_sensor):
         super().__init__(local, in_map, dim, freq)
         self._mean_error = np.zeros(dim) + mean_error # meter
         self._cov = np.eye(dim) * std**2
+        self._sensor = "gps"
 
 
     # Given true robot state and environment, return modeled GPS measurement
     def getMeasure(self, env, robot):
-        true_pose = robot._true_pose
-        gps_mean = true_pose + self._mean_error
+        # true_pose = robot._true_pose
+        # gps_mean = true_pose + self._mean_error
+        # return np.random.multivariate_normal(gps_mean, self._cov)
 
-        return np.random.multivariate_normal(gps_mean, self._cov)
+        # applies noise to robot's next true location
+        (mean,stddev) = self.getSensorNoise(env, robot)
+        X_t = robot._true_pose
+        zt = X_t + np.random.normal(mean, stddev, robot._est_pose.shape)
+        return zt

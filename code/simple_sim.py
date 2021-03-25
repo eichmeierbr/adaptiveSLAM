@@ -3,11 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from base_sensor import *
 from feature_sensor import *
+from odom_sensor import *
+from gps_sensor import *
 from robot import *
 from odometry import *
 from path import *
-from enviornment import *
+from environment import *
 from pathlib import Path
+
 
 from math import log
 
@@ -17,11 +20,11 @@ def display_map(env, robot, dt, sensor):
     plt.scatter(robot._est_pose[0], robot._est_pose[1])
 
     for sens in sensors:
-        sensor_vals = sens.get_values()
+        sensor_vals = sens.getMeasure(env, robot)
         if sensor_vals is None:
             continue
         else:
-            plt.scatter(sensor_vals[:,0], sensor_vals[:,1],s=0.6)
+            plt.scatter(sensor_vals[0], sensor_vals[1],s=0.6)
     
 
     plt.draw()
@@ -41,11 +44,12 @@ if __name__ == "__main__":
     sensors = []
     sensors.append(Base_sensor())
     sensors.append(feature_sensor())
+    sensors.append(GPS_sensor())
+    sensors.append(odometry_sensor())
 
     ## Initialize Map and features
-    local_path,env,features = select_world(sensors,4)
+    local_path,env,features = select_world(sensors,3)
     sensors[1].set_values(features)  #alex, feel free to change this 
-    
 
     ## Initialize Robot
     diff_control = Diff_movement()

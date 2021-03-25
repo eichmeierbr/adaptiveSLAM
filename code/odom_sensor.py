@@ -24,6 +24,5 @@ class odometry_sensor(Base_sensor):
         
         (mean,stddev) = self.getSensorNoise(env, robot)
         X_t_est = robot._est_pose
-        u_t_est = robot._u_t_commanded
-        zt = X_t_est + u_t_est + np.random.normal(mean, stddev, robot._est_pose.shape)
+        zt = X_t_est + np.random.normal(mean, stddev, robot._est_pose.shape)
         return zt

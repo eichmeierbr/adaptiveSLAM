@@ -1,5 +1,10 @@
 import numpy as np
 
+## TODO: Need way to store estimated feature location
+## TODO: Each sensor needs an error function
+## TODO: Need someway to extract features from each class that has them
+
+
 class Base_sensor:
     """
     What are P_map P_est???
@@ -12,9 +17,14 @@ class Base_sensor:
         self._last_meas = -10
         self._dim = dim
         self._sensor = None 
+        self._num_features = 0
 
     def get_values(self):
         return 
+
+    def error_function(self):
+        ## Return error for the optimizer
+        return
 
 
     def getMeasure(self, env, robot):

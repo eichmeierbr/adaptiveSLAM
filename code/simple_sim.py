@@ -9,6 +9,7 @@ from robot import *
 from odometry import *
 from path import *
 from environment import *
+from slam_class import *
 from pathlib import Path
 
 
@@ -56,9 +57,11 @@ if __name__ == "__main__":
     abs_control = Abs_movement()
     robot = Robot(init_pose, env, diff_control)
 
-
+    ## SLAM class
+    slammer = Slamma_Jamma()
 
     display_map(env, robot, dt, sensors)
+    idx = 0
 
     ## For time duration (Or all actions)
     for act in local_path:
@@ -70,16 +73,22 @@ if __name__ == "__main__":
 
         ## Obtain new sensor measurements
         zs = []
-        zs.append(robot._odom.get_measure())  ## Add odometry measurement
+        zs.append([0,robot._odom.get_measure()])  ## Add odometry measurement
+        i = 1
         for sens in sensors:
-            zs.append(sens.getMeasure(env, robot))     ## Add each sensor measurement
-
+            zs.append([i, sens.getMeasure(env, robot)])     ## Add each sensor measurement
+            i +=1
 
 
         ## Do SLAM
         ## TODO: SLAM
+        slammer.record_measurements(idx, zs)
+
+        if idx > 10:
+            slammer.optimize(robot, sensors)
 
         ## Display map
         display_map(env, robot, dt, sensors)
+        idx += 1
 
 

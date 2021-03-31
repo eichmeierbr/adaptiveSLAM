@@ -20,12 +20,12 @@ def display_map(env, robot, dt, sensor):
     plt.scatter(robot._true_pose[0], robot._true_pose[1])
     plt.scatter(robot._est_pose[0], robot._est_pose[1])
 
-    for sens in sensors:
-        sensor_vals = sens.getMeasure(env, robot)
-        if sensor_vals is None:
-            continue
-        else:
-            plt.scatter(sensor_vals[0], sensor_vals[1],s=0.6)
+    # for sens in sensors:
+        # sensor_vals = sens.getMeasure(env, robot)
+        # if sensor_vals is None:
+        #     continue
+        # else:
+            # plt.scatter(sensor_vals[0], sensor_vals[1],s=0.6)
     
 
     plt.draw()
@@ -43,9 +43,9 @@ if __name__ == "__main__":
 
     ## Initialize Sensors
     sensors = []
-    sensors.append(Base_sensor())
-    sensors.append(feature_sensor())
     sensors.append(GPS_sensor())
+    sensors.append(feature_sensor())
+    # sensors.append(Base_sensor())
     sensors.append(odometry_sensor())
 
     ## Initialize Map and features
@@ -73,8 +73,8 @@ if __name__ == "__main__":
 
         ## Obtain new sensor measurements
         zs = []
-        zs.append([0,robot._odom.get_measure()])  ## Add odometry measurement
-        i = 1
+        # zs.append([0,robot._odom.get_measure()])  ## Add odometry measurement
+        i = 0
         for sens in sensors:
             zs.append([i, sens.getMeasure(env, robot)])     ## Add each sensor measurement
             i +=1
@@ -83,8 +83,9 @@ if __name__ == "__main__":
         ## Do SLAM
         ## TODO: SLAM
         slammer.record_measurements(idx, zs)
-
-        if idx > 10:
+        
+        opt_freq = 10
+        if idx%opt_freq == opt_freq-1:
             slammer.optimize(robot, sensors)
 
         ## Display map

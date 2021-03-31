@@ -1,12 +1,10 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.optimize import least_squares, minimize
 
 
-
-def error_func(xo, measurements, robot, sensors):
-    error = []
-
-    # Parse xo
+def parse_xo(xo, measurements, robot, sensors):
+        # Parse xo
     num_poses = len(measurements) + 1
     pose_dim = len(robot._est_pose)
 
@@ -24,19 +22,29 @@ def error_func(xo, measurements, robot, sensors):
             features.append(this_feats)
             a=3
         else: features.append([])
+    return poses, features
 
+
+def error_func(xo, measurements, robot, sensors):
+    error = np.array([])
+
+    poses, features = parse_xo(xo, measurements, robot, sensors)
 
     # Compute errors
     for meas_set in measurements:
+        t = meas_set[0]
         for z in meas_set[1]:
-            # if z[0] == 0:
-            a=3
+            args = [features[z[0]]]
+            if sensors[z[0]]._sensor == "gps" or sensors[z[0]]._sensor == "feature":
+                errs = sensors[z[0]].error_function(poses[t], z[1], args)
+                errs /= errs.size
+                error = np.hstack((error, np.array(errs).flatten()))
 
-    return 20
+
+    return error
 
 class Slamma_Jamma:
     def __init__(self):
-        a=3
         self.measurements = []
 
 
@@ -56,6 +64,25 @@ class Slamma_Jamma:
                 xo = np.hstack((xo, other))
 
         out = least_squares(error_func, xo, args=([self.measurements, robot, sensors]))
-        a=3
+        
+        poses, features = parse_xo(out.x, self.measurements, robot, sensors)
 
+        poses = poses[:-1]
+        pt = np.array(robot._true_path)
+        pe = np.array(robot._est_path)
+        plt.plot(poses[:,0], poses[:,1], label="Optimized")
+        plt.plot(pt[:,0], pt[:,1], label="True")
+        plt.plot(pe[:,0], pe[:,1], label="Est")
+        # plt.show()
+
+        feats = features[1]
+        tf = sensors[1].features
+        plt.scatter(feats[:,0], feats[:,1])
+        plt.scatter(tf[:,0], tf[:,1])
+        plt.legend()
+        plt.show()
+
+        robot._est_path = list(poses)
+        robot._est_pose = robot._est_path[-1]
+        a=3
     

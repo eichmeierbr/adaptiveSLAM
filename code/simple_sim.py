@@ -49,7 +49,7 @@ if __name__ == "__main__":
     sensors.append(odometry_sensor())
 
     ## Initialize Map and features
-    local_path,env,features = select_world(sensors,3)
+    local_path,env,features = select_world(sensors,3, num_features=10)
     sensors[1].set_values(features)  #alex, feel free to change this 
 
     ## Initialize Robot

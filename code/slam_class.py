@@ -15,6 +15,7 @@ def parse_xo(xo, measurements, robot, sensors):
     temp_feats = xo[num_poses*pose_dim:]
     features = []
     for sensor in sensors:
+        ## TODO: Is this working for multiple different feature sensors???
         if sensor._num_features > 0:
             num = sensor._num_features
             dim = sensor.feature_dim
@@ -37,7 +38,11 @@ def error_func(xo, measurements, robot, sensors):
             args = [features[z[0]]]
             if sensors[z[0]]._sensor == "gps" or sensors[z[0]]._sensor == "feature":
                 errs = sensors[z[0]].error_function(poses[t], z[1], args)
+
+                ## TODO: Need smarter way to normalize or weight sensors
                 errs /= errs.size
+                if sensors[z[0]]._sensor == "feature":
+                    errs /=  1000
                 error = np.hstack((error, np.array(errs).flatten()))
 
 

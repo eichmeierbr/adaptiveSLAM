@@ -79,3 +79,36 @@ class feature_sensor(Base_sensor):
     #         zt.append(meas)
     #     return zt
     #     # return np.concatenate((X_t_est,X_t[2:]),axis=0)
+
+
+    ###############################################################################################################
+    ########            This may need to be deleted. It's a temp function
+
+    def getMeasure(self, env, robot):
+        """
+        Retrieve simulated sensor measurement from the robot.
+        Get ideal measurement from get_true_measure, then add noise.
+        \param map      Map of the robot's environment
+        \param robot    Robot object containing state information
+        \param zt       Sensor measurement
+        """
+
+        zt = []
+        (mean,stddev) = self.getSensorNoise(env, robot)
+        # stddev = 0.1
+        X_t = robot._true_pose
+
+        if self.features.size > 0:
+            for feature in self.features:
+                meas = self.get_true_measure(X_t, feature)
+                meas += np.random.normal(mean,stddev, len(meas))
+                zt.append(meas)
+        else:
+            meas = self.get_true_measure(X_t)
+            meas += np.random.normal(mean,stddev, len(meas))
+            zt.append(meas)
+        return zt
+
+
+    #############
+    ##########################################################################################################

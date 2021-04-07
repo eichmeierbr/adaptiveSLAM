@@ -65,11 +65,11 @@ if __name__ == "__main__":
 
         ## Do SLAM
         ## TODO: SLAM
-        # slammer.record_measurements(idx, zs)
+        slammer.record_measurements(idx, zs)
         
-        # opt_freq = 10
-        # if idx%opt_freq == opt_freq-1:
-        #     slammer.optimize(robot, sensors)
+        opt_freq = 10
+        if idx%opt_freq == opt_freq-1:
+            slammer.optimize(robot, sensors)
 
         ## Display map
         ds = display_stuff(robot)

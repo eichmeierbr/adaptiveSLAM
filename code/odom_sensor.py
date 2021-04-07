@@ -16,7 +16,7 @@ class odometry_sensor(Base_sensor):
         #TODO: change to sensor values we need
         
         (mean,stddev) = self.getSensorNoise(env, robot)
-        stddev = 1
+        # stddev = 1
         X_t_est = robot._est_pose
 
         ut = robot._odom._true_odom

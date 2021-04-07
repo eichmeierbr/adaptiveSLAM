@@ -19,14 +19,17 @@ class Environment():
         a=np.empty((self.map.shape[0],self.map.shape[1],2))
         a[:,:,mean] = 0
         a[:,:,stddev] = 1
+
+        noisy_std = 10
+
+        # if (quarter == 0):
+        #     a[0:self.map.shape[0]//2,     0:self.map.shape[1]//2,stddev]=100
         if (quarter == 1):
-            a[0:self.map.shape[0]//2,     0:self.map.shape[1]//2,stddev]=100
+            a[self.map.shape[0]//2:self.map.shape[0],     0:self.map.shape[1]//2,stddev]=noisy_std
         if (quarter == 2):
-            a[self.map.shape[0]//2:self.map.shape[0],     0:self.map.shape[1]//2,stddev]=100
+            a[0:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std
         if (quarter == 3):
-            a[0:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],stddev]=100
-        if (quarter == 4):
-            a[self.map.shape[0]//2:self.map.shape[0],     self.map.shape[1]//2:self.map.shape[1],stddev]=100
+            a[self.map.shape[0]//2:self.map.shape[0],     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std
         np.save(filename,a)
     
     def __getitem__(self,index):

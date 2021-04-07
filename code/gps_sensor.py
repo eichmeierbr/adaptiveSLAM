@@ -20,7 +20,7 @@ class GPS_sensor(Base_sensor):
 
         # applies noise to robot's next true location
         (mean,stddev) = self.getSensorNoise(env, robot)
-        stddev = 1
+        # stddev = 1
         X_t = np.copy(robot._true_pose)
         zt = self.get_true_measure(X_t)
         zt += np.random.normal(mean, stddev, X_t.shape)

@@ -16,6 +16,30 @@ class odometry_sensor(Base_sensor):
         #TODO: change to sensor values we need
         
         (mean,stddev) = self.getSensorNoise(env, robot)
+        # stddev = 1
         X_t_est = robot._est_pose
-        zt = X_t_est + np.random.normal(mean, stddev, robot._est_pose.shape)
+
+        ut = robot._odom._true_odom
+
+        zt = ut + np.random.normal(mean, stddev, ut.shape)
         return zt
+
+    def get_true_measure(self, pt, args):
+        pt1 = args[0]
+        rob = args[1]
+        return rob._odom.get_true_measure(pt1, pt)
+
+
+    def error_function(self, p, z, args=[]):
+        """
+        Compute the error for the optimizer. The error should assume the sensor reading
+        is perfect, and return the error from the true measurement with the given args
+        \param p        current pose estimate
+        \param z        sensor reading
+        \param args     any other arguments that may be useful wrapped in a list
+        """
+
+        pt1 = args[0]
+        rob = args[1]
+        ut = self.get_true_measure(p, args)
+        return ut - z 

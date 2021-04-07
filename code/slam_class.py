@@ -45,6 +45,11 @@ def error_func(xo, measurements, robot, sensors):
                     errs /=  1000
                 error = np.hstack((error, np.array(errs).flatten()))
 
+            if sensors[z[0]]._sensor == "odometry":
+                errs = sensors[z[0]].error_function(poses[t], z[1], [poses[t+1], robot])
+                error = np.hstack((error, np.array(errs).flatten()))
+                a=3
+
 
     return error
 
@@ -73,19 +78,19 @@ class Slamma_Jamma:
         poses, features = parse_xo(out.x, self.measurements, robot, sensors)
 
         poses = poses[:-1]
-        pt = np.array(robot._true_path)
-        pe = np.array(robot._est_path)
-        plt.plot(poses[:,0], poses[:,1], label="Optimized")
-        plt.plot(pt[:,0], pt[:,1], label="True")
-        plt.plot(pe[:,0], pe[:,1], label="Est")
-        # plt.show()
+        # pt = np.array(robot._true_path)
+        # pe = np.array(robot._est_path)
+        # plt.plot(poses[:,0], poses[:,1], label="Optimized")
+        # plt.plot(pt[:,0], pt[:,1], label="True")
+        # plt.plot(pe[:,0], pe[:,1], label="Est")
+        # # plt.show()
 
-        feats = features[1]
-        tf = sensors[1].features
-        plt.scatter(feats[:,0], feats[:,1])
-        plt.scatter(tf[:,0], tf[:,1])
-        plt.legend()
-        plt.show()
+        # feats = features[1]
+        # tf = sensors[1].features
+        # plt.scatter(feats[:,0], feats[:,1])
+        # plt.scatter(tf[:,0], tf[:,1])
+        # plt.legend()
+        # plt.show()
 
         robot._est_path = list(poses)
         robot._est_pose = robot._est_path[-1]

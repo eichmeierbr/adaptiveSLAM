@@ -8,8 +8,8 @@ class Robot:
         # Init pose variables
         self._true_pose = init_pose[:]
         self._est_pose  = init_pose[:]
-        self._true_path = [self._true_pose]
-        self._est_path  = [self._true_pose]
+        self._true_path = np.array(self._true_pose).reshape([1,-1])
+        self._est_path  = np.array(self._true_pose).reshape([1,-1])
 
         # Init current ut
         self._u_t_commanded = init_pose[:]
@@ -48,8 +48,8 @@ class Robot:
         self._true_pose, self._est_pose = self._odom.take_step(self._true_pose, self._est_pose, ut)
         self._u_t = self._true_pose-self._true_path[-1]
         ## Update path history
-        self._true_path.append(self._true_pose)
-        self._est_path.append(self._est_pose)
+        self._true_path = np.vstack((self._true_path, self._true_pose))
+        self._est_path  = np.vstack((self._est_path, self._est_pose))
 
 
     

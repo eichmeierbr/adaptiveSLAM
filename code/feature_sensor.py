@@ -96,6 +96,7 @@ class feature_sensor(Base_sensor):
         zt = []
         (mean,stddev) = self.getSensorNoise(env, robot)
         # stddev = 0.1
+        # mean = 0.0
         X_t = robot._true_pose
 
         if self.features.size > 0:

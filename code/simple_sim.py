@@ -20,6 +20,12 @@ def display_map(env, robot, dt, sensor):
     plt.scatter(robot._true_pose[0], robot._true_pose[1])
     plt.scatter(robot._est_pose[0], robot._est_pose[1])
 
+
+    true_path = np.array(robot._true_path)
+    est_path = np.array(robot._est_path)
+    plt.plot(est_path[:,0], est_path[:,1])
+    plt.plot(true_path[:,0], true_path[:,1])
+
     # for sens in sensors:
         # sensor_vals = sens.getMeasure(env, robot)
         # if sensor_vals is None:

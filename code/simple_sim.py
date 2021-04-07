@@ -68,7 +68,7 @@ if __name__ == "__main__":
         slammer.record_measurements(idx, zs)
         
         opt_freq = 10
-        if idx%opt_freq == opt_freq-1:
+        if (idx%opt_freq == opt_freq-1) or (idx-1==path_len):
             slammer.optimize(robot, sensors)
 
         ## Display map

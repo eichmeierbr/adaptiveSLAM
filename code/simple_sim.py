@@ -32,8 +32,10 @@ if __name__ == "__main__":
     sensors.append(odometry_sensor())
 
     ## Initialize Map and features
-    local_path,env,features = select_world(sensors,3, num_features=10)
-    sensors[1].set_values(features)  #alex, feel free to change this 
+    local_path,env,features = select_world(sensors,3, num_features=3)
+    for sen in sensors:
+        if sen._sensor == "feature":
+            sensors[1].set_values(features) 
 
     ## Initialize Robot
     diff_control = Diff_movement()
@@ -73,7 +75,7 @@ if __name__ == "__main__":
 
         ## Display map
         ds = display_stuff(robot)
-        ds.display_map2(env, robot, dt, sensors)
+        ds.display_map2(env, robot, dt, zs, sensors)
         idx += 1
 
         if idx==path_len:

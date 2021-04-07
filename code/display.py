@@ -30,8 +30,26 @@ class display_stuff:
 
         plt.imshow(blank_map)
 
+    def plot_features(self,sensors,env,zs,est_path):
+        point_size = 10
 
-    def display_map2(self,env, robot, dt, sensors):
+
+        # x,y = np.shape(env.map)
+        i=0
+        for sensor in sensors:
+            # val = sensor._sensor
+            # print(sensor)
+            if sensor._sensor == "feature":
+                true_features = sensor.get_values()
+                plt.scatter(true_features[:,0], true_features[:,1],s=point_size,label="True Features")
+                est_features = np.array(zs[i][1])
+                stuffx = np.add(est_features[:,0],est_path[-1,0])
+                stuffy = np.add(est_features[:,1],est_path[-1,1])
+                plt.scatter(stuffx,stuffy,s=point_size,label="Est Features")
+            i+=1
+
+
+    def display_map2(self,env, robot, dt, zs, sensors):
         fig1 = plt.figure(1)
         fig1.set_figheight(11)
         fig1.set_figwidth(11)
@@ -51,8 +69,10 @@ class display_stuff:
         plt.plot(true_path[:,0], true_path[:,1],label="True Path")
 
 
-        ## plot noisy regions:
-        # for i in sensors:
+        ## plot features:
+        self.plot_features(sensors,env,zs,est_path)
+                
+        
         
         # ax = fig1.add_subplot(1,1,1)
         # ax.set_facecolor('red')

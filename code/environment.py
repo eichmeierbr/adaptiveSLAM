@@ -20,7 +20,7 @@ class Environment():
         return reg
 
     def makeSensorRegions(self,filename, map, quarter):
-        noisy_std = 10
+        noisy_std = 1
         good_std = 0.1
 
 

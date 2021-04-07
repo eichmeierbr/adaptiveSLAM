@@ -9,7 +9,7 @@ class Motion_model:
         self._true_odom = []
 
 
-    def take_step(self, pt_true, pt_est, ut):
+    def take_step(self, pt_true, pt_est, pt_noisy, ut):
         """
         Perform an odometry step and output both the true position and the estimated position.
     
@@ -24,8 +24,11 @@ class Motion_model:
 
         pt1_true = self.odom_func(pt_true, ut)
         pt1_est  = self.odom_func(pt_est, self._noisy_odom)
+        pt1_noisy  = self.odom_func(pt_noisy, self._noisy_odom)
+        # pt1_noisy = np.array([0,0])
 
-        return pt1_true, pt1_est
+        return pt1_true, pt1_est, pt1_noisy
+
 
     def get_measure(self):
         return self._noisy_odom

@@ -56,6 +56,7 @@ def error_func(xo, measurements, robot, sensors):
 class Slamma_Jamma:
     def __init__(self):
         self.measurements = []
+        
 
 
     def record_measurements(self,idx,zs):

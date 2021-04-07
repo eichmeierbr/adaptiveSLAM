@@ -1,6 +1,7 @@
 import numpy as np
 
 import matplotlib.pyplot as plt
+from display import *
 from base_sensor import *
 from feature_sensor import *
 from odom_sensor import *
@@ -13,32 +14,8 @@ from slam_class import *
 from pathlib import Path
 
 
+
 from math import log
-
-def display_map(env, robot, dt, sensor):
-    plt.imshow(env.map, cmap='Greys')
-    plt.scatter(robot._true_pose[0], robot._true_pose[1])
-    plt.scatter(robot._est_pose[0], robot._est_pose[1])
-
-
-    true_path = np.array(robot._true_path)
-    est_path = np.array(robot._est_path)
-    plt.plot(est_path[:,0], est_path[:,1])
-    plt.plot(true_path[:,0], true_path[:,1])
-
-    # for sens in sensors:
-        # sensor_vals = sens.getMeasure(env, robot)
-        # if sensor_vals is None:
-        #     continue
-        # else:
-            # plt.scatter(sensor_vals[0], sensor_vals[1],s=0.6)
-    
-
-    plt.draw()
-    plt.pause(dt)
-    plt.clf()
-
-
 
 
 if __name__ == "__main__":
@@ -66,9 +43,9 @@ if __name__ == "__main__":
     ## SLAM class
     slammer = Slamma_Jamma()
 
-    display_map(env, robot, dt, sensors)
+    # display_map(env, robot, dt, sensors)
     idx = 0
-
+    path_len = len(local_path)
     ## For time duration (Or all actions)
     for act in local_path:
         previous_true_pose = robot._true_pose[:]
@@ -88,14 +65,18 @@ if __name__ == "__main__":
 
         ## Do SLAM
         ## TODO: SLAM
-        slammer.record_measurements(idx, zs)
+        # slammer.record_measurements(idx, zs)
         
-        opt_freq = 10
-        if idx%opt_freq == opt_freq-1:
-            slammer.optimize(robot, sensors)
+        # opt_freq = 10
+        # if idx%opt_freq == opt_freq-1:
+        #     slammer.optimize(robot, sensors)
 
         ## Display map
-        display_map(env, robot, dt, sensors)
+        ds = display_stuff(robot)
+        ds.display_map2(env, robot, dt, sensors)
         idx += 1
+
+        if idx==path_len:
+            print("done")
 
 

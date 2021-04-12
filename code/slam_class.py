@@ -45,10 +45,20 @@ def error_func(xo, measurements, robot, sensors):
                     errs /=  1000
                 error = np.hstack((error, np.array(errs).flatten()))
 
+
             if sensors[z[0]]._sensor == "odometry":
                 errs = sensors[z[0]].error_function(poses[t], z[1], [poses[t+1], robot])
-                error = np.hstack((error, np.array(errs).flatten()))
+
+                # used for midterm testing
+                # x,y = robot._true_path[t,:]
+                # if x>340 and y>160:
+                #     errs = errs*0
+
+                error = np.hstack((error, np.array(errs).flatten()))                
+                
                 a=3
+
+            
 
 
     return error

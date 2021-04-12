@@ -21,7 +21,7 @@ class Environment():
 
     def makeSensorRegions(self,filename, map, quarter):
         noisy_std = 1
-        good_std = 0.1
+        good_std = 1
 
 
         mean,stddev = 0,1

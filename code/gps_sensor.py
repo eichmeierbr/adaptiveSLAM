@@ -10,6 +10,8 @@ class GPS_sensor(Base_sensor):
         self._sensor = "gps"
 
 
+
+
     # Given true robot state and environment, return modeled GPS measurement
     def getMeasure(self, env, robot):
         # true_pose = robot._true_pose
@@ -18,6 +20,8 @@ class GPS_sensor(Base_sensor):
 
         # applies noise to robot's next true location
         (mean,stddev) = self.getSensorNoise(env, robot)
-        X_t = robot._true_pose
-        zt = X_t + np.random.normal(mean, stddev, robot._est_pose.shape)
+        # stddev = 1
+        X_t = np.copy(robot._true_pose)
+        zt = self.get_true_measure(X_t)
+        zt += np.random.normal(mean, stddev, X_t.shape)
         return zt

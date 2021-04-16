@@ -2,16 +2,9 @@
 from base_sensor import *
 class odometry_sensor(Base_sensor):
     def __init__(self, local=True, in_map=np.zeros([1000,1000]), P_est=0.1, P_des=0.1, dim=2, freq=0.01):
-        self._local = False
-        self.__P_map = np.ones_like(in_map) * P_des
-        self._P_est = np.ones(dim)*P_est
-        self._freq  = freq
-        self._last_meas = -10
-        self._dim = dim
+        super().__init__(local, in_map, P_est, P_des, dim, freq)
         self._sensor = "odometry"
 
-    def get_values(self):
-        return 
 
     def getMeasure(self, env, robot):
         """
@@ -23,6 +16,30 @@ class odometry_sensor(Base_sensor):
         #TODO: change to sensor values we need
         
         (mean,stddev) = self.getSensorNoise(env, robot)
+        # stddev = 1
         X_t_est = robot._est_pose
-        zt = X_t_est + np.random.normal(mean, stddev, robot._est_pose.shape)
+
+        ut = robot._odom._true_odom
+
+        zt = ut + np.random.normal(mean, stddev, ut.shape)
         return zt
+
+    def get_true_measure(self, pt, args):
+        pt1 = args[0]
+        rob = args[1]
+        return rob._odom.get_true_measure(pt1, pt)
+
+
+    def error_function(self, p, z, args=[]):
+        """
+        Compute the error for the optimizer. The error should assume the sensor reading
+        is perfect, and return the error from the true measurement with the given args
+        \param p        current pose estimate
+        \param z        sensor reading
+        \param args     any other arguments that may be useful wrapped in a list
+        """
+
+        pt1 = args[0]
+        rob = args[1]
+        ut = self.get_true_measure(p, args)
+        return ut - z 

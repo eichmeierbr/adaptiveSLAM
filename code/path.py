@@ -1,7 +1,7 @@
 
 
 import numpy as np
-from enviornment import *
+from environment import *
 from pathlib import Path
 import random
 
@@ -126,6 +126,6 @@ def select_world(sensors,num,num_features=100,step=10,smooth=True):
 
     waypoints = get_path(waypoints,step_size=step,smooth=smooth)
     waypoints = convert_2_local(waypoints)
-    env = Enviornment(sensors,env_map)
+    env = Environment(sensors,env_map)
     features = random_features(env,num_features)
     return waypoints,env,features

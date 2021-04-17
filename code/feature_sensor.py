@@ -11,6 +11,8 @@ class feature_sensor(Base_sensor):
         self._num_features = len(features)
         self.feature_dim = features.shape[1]
 
+        self.last_feat_pos = []
+
     def get_values(self):
         return self.features
 
@@ -108,6 +110,8 @@ class feature_sensor(Base_sensor):
             meas = self.get_true_measure(X_t)
             meas += np.random.normal(mean,stddev, len(meas))
             zt.append(meas)
+
+        self.last_feat_pos = np.array(zt) + robot._est_pose
         return zt
 
 

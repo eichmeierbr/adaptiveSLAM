@@ -17,6 +17,7 @@ class Base_sensor:
         self._last_meas = -10
         self._dim = dim
         self._sensor = None 
+        self._sense_rate = 1
         self._num_features = 0
         self.features = np.array([])
 

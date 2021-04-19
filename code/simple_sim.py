@@ -34,8 +34,8 @@ if __name__ == "__main__":
 
     ## Initialize Sensor Rates
     ## NOTE: DO NOT CHANGE ODOM_SENSOR RATE FROM 1
-    GPS_rate = 5
-    Feature_rate = 2
+    GPS_rate = 1
+    Feature_rate = 1
     
     sensors[0]._sense_rate = GPS_rate
     sensors[1]._sense_rate = Feature_rate
@@ -51,6 +51,7 @@ if __name__ == "__main__":
     diff_control = Diff_movement()
     abs_control = Abs_movement()
     robot = Robot(init_pose, env, diff_control)
+    sensors[-1]._odom_func = diff_control.odom_func
 
     ## SLAM class
     slammer = Slamma_Jamma()

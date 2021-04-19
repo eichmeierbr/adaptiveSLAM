@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.optimize import least_squares
-from sklearn.neural_network import MLPRegressor
+from sklearn.neural_network import MLPRegressor, MLPClassifier
 
 # np.random.seed(0)
 
@@ -37,9 +37,11 @@ def make_dataset(num_sensors, len_path, num_samples, min_std=1, max_std=20):
 
     for _ in range(num_samples):
         std_devs = np.random.uniform(low=min_std, high=max_std, size=num_sensors)
+        fak_devs = std_devs + np.random.normal(scale=3, size=len(std_devs))
         
-        xs.append( make_example(std_devs, len_path) )
-        ys.append( std_devs)
+        xs.append( np.hstack((fak_devs,make_example(std_devs, len_path))) )
+        # ys.append( (std_devs > 15)*1)
+        ys.append( std_devs )
 
     return np.array(xs), np.array(ys)
 
@@ -51,24 +53,37 @@ def split_dataset(xs, ys, train_ratio):
     return train_x, train_y, test_x, test_y
 
 
-num_sensors = 4
+num_sensors = 3
 len_path = 10
-num_samples = 10000
+num_samples = 30000
 train_ratio = 0.7
 
 xs, ys = make_dataset(num_sensors, len_path, num_samples)
 train_x, train_y, test_x, test_y = split_dataset(xs, ys, train_ratio)
 
 model = MLPRegressor(hidden_layer_sizes=(30,30)).fit(train_x, train_y)
+# model = MLPClassifier(hidden_layer_sizes=(30,30)).fit(train_x, train_y)
 
 
 print('Label1:   ',test_y[0])
 print('Predict1: ', model.predict([test_x[0]]))
 
 
-test_arr = [1,2,1,7]
+test_arr = [1,20,13]
+fake_arr = [14, 2, 3]
+fake_arrs= []
+fake_arrs.append(fake_arr)
+
 print('\nLabel2:   ', test_arr)
-print('Predict2:   ', model.predict([make_example(test_arr, len_path)]))
+print('Seed:   ', fake_arr)
+
+for i in range(1000):
+    fake_arr = model.predict([np.hstack((fake_arr, make_example(test_arr, len_path)))]).flatten()
+    fake_arrs.append(fake_arr)
+
+fake_arrs = np.array(fake_arrs)
+pred = np.median(fake_arrs[:-100], axis=0 )
+print('Final Pred: ', pred)
 
 print(model.score(test_x, test_y))
 

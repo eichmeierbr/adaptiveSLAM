@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import least_squares, minimize
 
+from weighter import *
+
 
 def parse_xo(xo, measurements, robot, sensors):
         # Parse xo
@@ -71,6 +73,7 @@ class Slamma_Jamma:
     def __init__(self):
         self.measurements = []
         self.last_opt = 0
+        self.weighter = weighter()
         
 
 
@@ -82,16 +85,26 @@ class Slamma_Jamma:
     def optimize(self, robot, sensors):
         ## Note: This optimization is a simple take parameters and return best guess.
 
-        xo = np.array(robot._est_path[self.last_opt+1:]).flatten()
+        poses = robot._est_path[self.last_opt+1:]
+        anchor = robot._est_path[self.last_opt]
+        measurements = self.measurements[self.last_opt:]
 
+        xo = np.array(poses).flatten()
+
+        # Extract out landmarks to optimize
         for sensor in sensors:
             if sensor._sensor == "feature":
-                other = sensor.features.flatten()
+                # If the landmarks aren't estimated, estimate them using the first pose
+                if len(sensor.features_est) == 0:
+                    sensor.estimate_landmark_positions(measurements[0][1][1][1], anchor)
+                other = sensor.features_est.flatten()
                 xo = np.hstack((xo, other))
 
-        out = least_squares(error_func, xo, args=([self.measurements[self.last_opt:], robot, sensors, robot._est_path[self.last_opt], self.last_opt]))
+
+        weights = self.weighter.get_weights(sensors, measurements,  anchor)
+        out = least_squares(error_func, xo, args=([measurements, robot, sensors, anchor, self.last_opt]))
         
-        poses, features = parse_xo(out.x, self.measurements[self.last_opt:], robot, sensors)
+        poses, features = parse_xo(out.x, measurements, robot, sensors)
 
         # pt = np.array(robot._true_path)
         # pe = np.array(robot._est_path)
@@ -109,4 +122,8 @@ class Slamma_Jamma:
 
         robot._est_path[self.last_opt+1:] = list(poses)
         robot._est_pose = robot._est_path[-1]
+
+        for i in range(len(features)):
+            sensors[i].features_est = features[i]
+        
     

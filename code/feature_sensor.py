@@ -7,9 +7,10 @@ class feature_sensor(Base_sensor):
         super().__init__(local, in_map, P_est, P_des, dim, freq)
         self._sensor = "feature"
 
-        self.features = features 
+        self.features = features
         self._num_features = len(features)
         self.feature_dim = features.shape[1]
+        self.features_est = []
 
         self.last_feat_pos = []
 
@@ -117,3 +118,19 @@ class feature_sensor(Base_sensor):
 
     #############
     ##########################################################################################################
+
+    def estimate_landmark_positions(self, zs, anchor):
+        self.features_est = zs + anchor
+        pass
+
+
+    def get_nominal_path(self, zs, args=[]):
+        path = []
+
+        if len(self.features_est) == 0:
+            self.estimate_landmark_positions(zs[0][1], args)
+
+        for z in zs:
+            pose = np.median(self.features_est - z[1], axis=0)
+            path.append(pose)
+        return np.array(path)

@@ -4,6 +4,7 @@ class odometry_sensor(Base_sensor):
     def __init__(self, local=True, in_map=np.zeros([1000,1000]), P_est=0.1, P_des=0.1, dim=2, freq=0.01):
         super().__init__(local, in_map, P_est, P_des, dim, freq)
         self._sensor = "odometry"
+        self._odom_func = None
 
 
     def getMeasure(self, env, robot):
@@ -43,3 +44,14 @@ class odometry_sensor(Base_sensor):
         rob = args[1]
         ut = self.get_true_measure(p, args)
         return ut - z 
+
+
+    def get_nominal_path(self, zs, args=[]):
+        path = []
+        pose = args
+
+        for idx, z in zs:
+            pose = self._odom_func(pose, z)
+            path.append(pose)
+
+        return np.array(path)

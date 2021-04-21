@@ -1,9 +1,5 @@
 import numpy as np
 
-## TODO: Need way to store estimated feature location
-## TODO: Each sensor needs an error function
-## TODO: Need someway to extract features from each class that has them
-
 
 class Base_sensor:
     """

@@ -102,6 +102,8 @@ class Slamma_Jamma:
 
 
         weights = self.weighter.get_weights(sensors, measurements,  anchor)
+        ## TODO: Integrate weights into optimization
+        
         out = least_squares(error_func, xo, args=([measurements, robot, sensors, anchor, self.last_opt]))
         
         poses, features = parse_xo(out.x, measurements, robot, sensors)

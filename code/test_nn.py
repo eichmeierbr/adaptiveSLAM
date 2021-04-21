@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import least_squares
 from sklearn.neural_network import MLPRegressor, MLPClassifier
+import joblib
 
 # np.random.seed(0)
 
@@ -30,7 +31,7 @@ def make_example(std_devs, len_path):
     return s.flatten()[idxs] 
 
 
-def make_dataset(num_sensors, len_path, num_samples, min_std=1, max_std=20):
+def make_dataset(num_sensors, len_path, num_samples, min_std=0.0, max_std=50.0):
     
     xs = []
     ys = []
@@ -55,15 +56,15 @@ def split_dataset(xs, ys, train_ratio):
 
 num_sensors = 3
 len_path = 10
-num_samples = 30000
+num_samples = 3000000
 train_ratio = 0.7
 
 xs, ys = make_dataset(num_sensors, len_path, num_samples)
 train_x, train_y, test_x, test_y = split_dataset(xs, ys, train_ratio)
 
-model = MLPRegressor(hidden_layer_sizes=(30,30)).fit(train_x, train_y)
+# model = MLPRegressor(hidden_layer_sizes=(30,30)).fit(train_x, train_y)
 # model = MLPClassifier(hidden_layer_sizes=(30,30)).fit(train_x, train_y)
-
+model = joblib.load('first_model2.joblib')
 
 print('Label1:   ',test_y[0])
 print('Predict1: ', model.predict([test_x[0]]))
@@ -87,3 +88,4 @@ print('Final Pred: ', pred)
 
 print(model.score(test_x, test_y))
 
+joblib.dump(model,'first_model.joblib')

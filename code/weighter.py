@@ -101,8 +101,9 @@ class weighter():
         stddevs[stddevs > self.max_stddev] = self.max_stddev
         stddevs[stddevs < self.min_stddev] = self.min_stddev
 
-        # Return reciporcal
-        return 1/stddevs
+        # Return reciporcal, or another funct if needed
+        tiny_funct = 1/stddevs
+        return tiny_funct
 
 
 

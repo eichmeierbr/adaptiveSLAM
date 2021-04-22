@@ -28,7 +28,7 @@ def parse_xo(xo, measurements, robot, sensors):
     return poses, features
 
 
-def error_func(xo, measurements, robot, sensors, anchor, last_opt):
+def error_func(xo, measurements, robot, sensors, anchor, last_opt, weights):
     error = np.array([])
 
     poses, features = parse_xo(xo, measurements, robot, sensors)
@@ -43,10 +43,12 @@ def error_func(xo, measurements, robot, sensors, anchor, last_opt):
                 errs = sensors[z[0]].error_function(poses[t], z[1], args)
 
                 ## TODO: Need smarter way to normalize or weight sensors
-                errs /= errs.size
+                
+
+                #weightsz[0]*errss = errros
                 # if sensors[z[0]]._sensor == "feature":
                     # errs /=  1000
-                error = np.hstack((error, np.array(errs).flatten()))
+                # error = np.hstack((error, np.array(errs).flatten()))
 
 
             if sensors[z[0]]._sensor == "odometry":
@@ -59,10 +61,11 @@ def error_func(xo, measurements, robot, sensors, anchor, last_opt):
                 # x,y = robot._true_path[t,:]
                 # if x>340 and y>160:
                 #     errs = errs*0
-
-                error = np.hstack((error, np.array(errs).flatten()))                
+            errs = weights[z[0]]*errs
+            errs /= errs.size
+            error = np.hstack((error, np.array(errs).flatten()))                
                 
-                a=3
+                
 
             
 
@@ -104,7 +107,7 @@ class Slamma_Jamma:
         weights = self.weighter.get_weights(sensors, measurements,  anchor)
         ## TODO: Integrate weights into optimization
         
-        out = least_squares(error_func, xo, args=([measurements, robot, sensors, anchor, self.last_opt]))
+        out = least_squares(error_func, xo, args=([measurements, robot, sensors, anchor, self.last_opt, weights]))
         
         poses, features = parse_xo(out.x, measurements, robot, sensors)
 

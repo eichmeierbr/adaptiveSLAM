@@ -23,6 +23,7 @@ if __name__ == "__main__":
     dt  = 0.0001
     t   = 0.0
     init_pose = np.array([100,100])
+    opt_freq = 10
 
     ## Initialize Sensors
     sensors = []
@@ -30,6 +31,15 @@ if __name__ == "__main__":
     sensors.append(feature_sensor())
     # sensors.append(Base_sensor())
     sensors.append(odometry_sensor())
+
+    ## Initialize Sensor Rates
+    ## NOTE: DO NOT CHANGE ODOM_SENSOR RATE FROM 1
+    GPS_rate = 1
+    Feature_rate = 1
+    
+    sensors[0]._sense_rate = GPS_rate
+    sensors[1]._sense_rate = Feature_rate
+
 
     ## Initialize Map and features
     local_path,env,features = select_world(sensors,3, num_features=10)
@@ -41,11 +51,11 @@ if __name__ == "__main__":
     diff_control = Diff_movement()
     abs_control = Abs_movement()
     robot = Robot(init_pose, env, diff_control)
+    sensors[-1]._odom_func = diff_control.odom_func
 
     ## SLAM class
     slammer = Slamma_Jamma()
 
-    # display_map(env, robot, dt, sensors)
     idx = 0
     path_len = len(local_path)
     ## For time duration (Or all actions)
@@ -58,18 +68,16 @@ if __name__ == "__main__":
 
         ## Obtain new sensor measurements
         zs = []
-        # zs.append([0,robot._odom.get_measure()])  ## Add odometry measurement
-        i = 0
-        for sens in sensors:
-            zs.append([i, sens.getMeasure(env, robot)])     ## Add each sensor measurement
-            i +=1
+        for i, sens in enumerate(sensors):
+            if idx % sens._sense_rate == 0:
+                zs.append([i, sens.getMeasure(env, robot)])     ## Add each sensor measurement
+            else:
+                zs.append([i, []])     ## Add each sensor measurement
 
 
         ## Do SLAM
-        ## TODO: SLAM
         slammer.record_measurements(idx, zs)
         
-        opt_freq = 10
         if (idx%opt_freq == opt_freq-1) or (idx-1==path_len):
             slammer.optimize(robot, sensors)
 

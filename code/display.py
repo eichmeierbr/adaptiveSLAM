@@ -43,9 +43,13 @@ class display_stuff:
                 true_features = sensor.get_values()
                 plt.scatter(true_features[:,0], true_features[:,1],s=point_size,label="True Features")
                 est_features = np.array(zs[i][1])
-                stuffx = np.add(est_features[:,0],est_path[-1,0])
-                stuffy = np.add(est_features[:,1],est_path[-1,1])
-                plt.scatter(stuffx,stuffy,s=point_size,label="Est Features")
+
+                # stuffx = np.add(est_features[:,0],est_path[-1,0])
+                # stuffy = np.add(est_features[:,1],est_path[-1,1])
+                plt.scatter(sensor.last_feat_pos[:,0],sensor.last_feat_pos[:,1],s=point_size,label="Last Features")
+
+                if len(sensor.features_est) > 0:
+                    plt.scatter(sensor.features_est[:,0],sensor.features_est[:,1],s=point_size,label="Est Features")
             i+=1
 
 

@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.optimize import least_squares
+from sklearn.neural_network import MLPRegressor
 
 def error_func(x, mat):
     error = []
@@ -19,10 +20,10 @@ for stdev in std_devs:
     est_paths.append(np.random.normal(scale=stdev, size=num ))
 est_paths = np.array(est_paths)
 
-s = np.zeros([len(std_devs), len(std_devs)])
+s = np.zeros([est_paths.shape[0], est_paths.shape[0]])
 
-for i in range(len(std_devs)):
-    for j in range(len(std_devs)):
+for i in range(est_paths.shape[0]):
+    for j in range(est_paths.shape[0]):
         if i == j:
             continue
         err = est_paths[i] - est_paths[j]

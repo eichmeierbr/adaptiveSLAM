@@ -1,9 +1,5 @@
 import numpy as np
 
-## TODO: Need way to store estimated feature location
-## TODO: Each sensor needs an error function
-## TODO: Need someway to extract features from each class that has them
-
 
 class Base_sensor:
     """
@@ -17,8 +13,11 @@ class Base_sensor:
         self._last_meas = -10
         self._dim = dim
         self._sensor = None 
+        self._sense_rate = 1
         self._num_features = 0
         self.features = np.array([])
+        self.features_est = []
+
 
     def get_values(self):
         """
@@ -92,3 +91,10 @@ class Base_sensor:
         \param robot    Robot object containing state information
         """
         return env.getSensorNoise(self,robot)
+
+
+    def get_nominal_path(self, zs, args=[]):
+        path = []
+        for z in zs:
+            path.append(z[1])
+        return path

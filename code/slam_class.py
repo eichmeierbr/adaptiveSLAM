@@ -61,7 +61,7 @@ def error_func(xo, measurements, robot, sensors, anchor, last_opt, weights):
                 # x,y = robot._true_path[t,:]
                 # if x>340 and y>160:
                 #     errs = errs*0
-            errs = weights[z[0]]*errs
+            # errs = weights[z[0]]*errs
             errs /= errs.size
             error = np.hstack((error, np.array(errs).flatten()))                
                 
@@ -131,4 +131,4 @@ class Slamma_Jamma:
         for i in range(len(features)):
             sensors[i].features_est = features[i]
         
-    
+        self.last_opt = len(self.measurements)

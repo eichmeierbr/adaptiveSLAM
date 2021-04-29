@@ -20,9 +20,9 @@ class Environment():
         return reg
 
     def makeSensorRegions(self,filename, map, quarter):
-        noisy_std = 50
+        noisy_std = 3
         good_std = 1
-
+        new_mean = "random"
 
         mean,stddev = 0,1
         a=np.empty((self.map.shape[0],self.map.shape[1],2))
@@ -32,13 +32,50 @@ class Environment():
         # if (quarter == 0):
         #     a[0:self.map.shape[0]//2,     0:self.map.shape[1]//2,stddev]=100
         if (quarter == 1):
-            a[self.map.shape[0]//2:self.map.shape[0],     0:self.map.shape[1]//2,stddev]=noisy_std
+            if (new_mean == 'mgrid'):
+                X,Y = np.mgrid[0:self.map.shape[0]-self.map.shape[0]//2:1,0:self.map.shape[1]//2:1]
+                a[self.map.shape[0]//2:self.map.shape[0],     0:self.map.shape[1]//2,mean]=X+Y
+            elif (new_mean == 'random'):
+                a[self.map.shape[0]//2:self.map.shape[0],     0:self.map.shape[1]//2,mean]=np.random.randint(0, 50, (self.map.shape[0]-self.map.shape[0]//2,self.map.shape[1]//2))
+            else:
+                a[self.map.shape[0]//2:self.map.shape[0],     0:self.map.shape[1]//2,mean]=new_mean
+            if (noisy_std == 'mgrid'):
+                X,Y = np.mgrid[0:self.map.shape[0]-self.map.shape[0]//2:1,0:self.map.shape[1]//2:1]
+                a[self.map.shape[0]//2:self.map.shape[0],     0:self.map.shape[1]//2,stddev]=X+Y
+            elif (noisy_std == 'random'):
+                a[self.map.shape[0]//2:self.map.shape[0],     0:self.map.shape[1]//2,stddev]=np.random.randint(0, 50, (self.map.shape[0]-self.map.shape[0]//2,self.map.shape[1]//2))
+            else:
+                a[self.map.shape[0]//2:self.map.shape[0],     0:self.map.shape[1]//2,stddev]=noisy_std
         if (quarter == 2):
-            a[0:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std
-            # a[0:self.map.shape[0]//4,     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std*10
-            # a[self.map.shape[0]//4:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std/10
+            if (new_mean == 'mgrid'):
+                X,Y = np.mgrid[0:self.map.shape[0]//2:1,0:self.map.shape[1]-self.map.shape[1]//2:1]
+                a[0:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],mean]=X+Y
+            elif (new_mean == 'random'):
+                a[0:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],mean]=np.random.randint(0, 50, (self.map.shape[0]//2,self.map.shape[1]-self.map.shape[1]//2))
+            else:
+                a[0:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],mean]=new_mean
+            if (noisy_std == 'mgrid'):
+                X,Y = np.mgrid[0:self.map.shape[0]//2:1,0:self.map.shape[1]-self.map.shape[1]//2:1]
+                a[0:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],stddev]=X+Y
+            elif (noisy_std == 'random'):
+                a[0:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],stddev]=np.random.randint(0, 50, (self.map.shape[0]//2,self.map.shape[1]-self.map.shape[1]//2))
+            else:
+                a[0:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std
         if (quarter == 3):
-            a[self.map.shape[0]//2:self.map.shape[0],     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std
+            if (new_mean == 'mgrid'):
+                X,Y = np.mgrid[0:self.map.shape[0]-self.map.shape[0]//2:1,0:self.map.shape[1]-self.map.shape[1]//2:1]
+                a[self.map.shape[0]//2:self.map.shape[0],     self.map.shape[1]//2:self.map.shape[1],mean]=X+Y
+            elif (new_mean == 'random'):
+                a[self.map.shape[0]//2:self.map.shape[0],     self.map.shape[1]//2:self.map.shape[1],mean]=np.random.randint(0, 50, (self.map.shape[0]-self.map.shape[0]//2,self.map.shape[1]-self.map.shape[1]//2))
+            else:
+                a[self.map.shape[0]//2:self.map.shape[0],     self.map.shape[1]//2:self.map.shape[1],mean]=new_mean
+            if (noisy_std == 'mgrid'):
+                X,Y = np.mgrid[0:self.map.shape[0]-self.map.shape[0]//2:1,0:self.map.shape[1]-self.map.shape[1]//2:1]
+                a[self.map.shape[0]//2:self.map.shape[0],     self.map.shape[1]//2:self.map.shape[1],stddev]=X+Y
+            elif (noisy_std == 'random'):
+                a[self.map.shape[0]//2:self.map.shape[0],     self.map.shape[1]//2:self.map.shape[1],stddev]=np.random.randint(0, 50, (self.map.shape[0]-self.map.shape[0]//2,self.map.shape[1]-self.map.shape[1]//2))
+            else:
+                a[self.map.shape[0]//2:self.map.shape[0],     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std
         np.save(filename,a)
     
     def __getitem__(self,index):

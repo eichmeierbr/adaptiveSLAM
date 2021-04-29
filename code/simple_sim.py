@@ -12,6 +12,7 @@ from path import *
 from environment import *
 from slam_class import *
 from pathlib import Path
+from time import sleep
 
 
 
@@ -88,5 +89,6 @@ if __name__ == "__main__":
 
         if idx==path_len:
             print("done")
+            sleep(3)
 
 

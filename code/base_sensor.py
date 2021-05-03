@@ -17,6 +17,7 @@ class Base_sensor:
         self._num_features = 0
         self.features = np.array([])
         self.features_est = []
+        self.zs = []
 
 
     def get_values(self):
@@ -80,6 +81,7 @@ class Base_sensor:
             meas = self.get_true_measure(X_t)
             meas += np.random.normal(mean,stddev, len(meas))
             zt.append(meas)
+        self.zs.append(zt)
         return zt
 
 

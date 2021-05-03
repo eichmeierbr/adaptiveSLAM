@@ -13,13 +13,14 @@ from environment import *
 from slam_class import *
 from pathlib import Path
 
-
-
 from math import log
 
 
-if __name__ == "__main__":
-    
+
+def run_sim(plot=False, raw_path_idx=-1, opt_method=0, seed=-1):
+    if not seed == -1:
+        np.random.seed(seed)
+
     dt  = 0.0001
     t   = 0.0
     init_pose = np.array([100,100])
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     sensors[-1]._odom_func = diff_control.odom_func
 
     ## SLAM class
-    slammer = Slamma_Jamma()
+    slammer = Slamma_Jamma(method=opt_method)
 
     idx = 0
     path_len = len(local_path)
@@ -74,7 +75,8 @@ if __name__ == "__main__":
             else:
                 zs.append([i, []])     ## Add each sensor measurement
 
-
+        if not raw_path_idx == -1 and raw_path_idx < len(sensors):
+            robot._noisy_path = np.array(sensors[2].get_nominal_path(sensors[2].zs, [robot._est_path[0]])).reshape([-1,2])
         ## Do SLAM
         slammer.record_measurements(idx, zs)
         
@@ -82,11 +84,17 @@ if __name__ == "__main__":
             slammer.optimize(robot, sensors)
 
         ## Display map
-        ds = display_stuff(robot)
-        ds.display_map2(env, robot, dt, zs, sensors)
-        idx += 1
+        if plot:
+            ds = display_stuff(robot)
+            ds.display_map2(env, robot, dt, zs, sensors)
 
-        if idx==path_len:
-            print("done")
+        idx += 1
+        # if idx==path_len:
+            # print("done")
+    return robot, sensors
+
+
+if __name__ == "__main__":
+    run_sim(plot=True, opt_method=0)
 
 

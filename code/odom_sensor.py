@@ -23,6 +23,7 @@ class odometry_sensor(Base_sensor):
         ut = robot._odom._true_odom
 
         zt = ut + np.random.normal(mean, stddev, ut.shape)
+        self.zs.append([len(self.zs), zt])
         return zt
 
     def get_true_measure(self, pt, args):

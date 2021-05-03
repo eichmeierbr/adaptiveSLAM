@@ -113,6 +113,7 @@ class feature_sensor(Base_sensor):
             zt.append(meas)
 
         self.last_feat_pos = np.array(zt) + robot._est_pose
+        self.zs.append([len(self.zs), np.array(zt)])
         return zt
 
 

@@ -24,4 +24,6 @@ class GPS_sensor(Base_sensor):
         X_t = np.copy(robot._true_pose)
         zt = self.get_true_measure(X_t)
         zt += np.random.normal(mean, stddev, X_t.shape)
+
+        self.zs.append([len(self.zs), zt])
         return zt

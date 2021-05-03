@@ -43,12 +43,6 @@ def error_func(xo, measurements, robot, sensors, anchor, last_opt, weights):
                 errs = sensors[z[0]].error_function(poses[t], z[1], args)
 
                 ## TODO: Need smarter way to normalize or weight sensors
-                
-
-                #weightsz[0]*errss = errros
-                # if sensors[z[0]]._sensor == "feature":
-                    # errs /=  1000
-                # error = np.hstack((error, np.array(errs).flatten()))
 
 
             if sensors[z[0]]._sensor == "odometry":
@@ -61,22 +55,25 @@ def error_func(xo, measurements, robot, sensors, anchor, last_opt, weights):
                 # x,y = robot._true_path[t,:]
                 # if x>340 and y>160:
                 #     errs = errs*0
-            errs = weights[z[0]]*errs
+
+            errs = weights[t,z[0]]*errs
             errs /= errs.size
             error = np.hstack((error, np.array(errs).flatten()))                
                 
+    return error
                 
 
             
 
 
-    return error
 
 class Slamma_Jamma:
-    def __init__(self):
+    def __init__(self, opt_rate=10, method=0):
         self.measurements = []
         self.last_opt = 0
         self.weighter = weighter()
+        self.opt_rate = opt_rate
+        self._method = method
         
 
 
@@ -84,6 +81,7 @@ class Slamma_Jamma:
         ## Note: This is a pretty simplistic way to store the data
         ##       We may want to improve this later 
         self.measurements.append([idx, zs])
+
 
     def optimize(self, robot, sensors):
         ## Note: This optimization is a simple take parameters and return best guess.
@@ -104,26 +102,22 @@ class Slamma_Jamma:
                 xo = np.hstack((xo, other))
 
 
-        weights = self.weighter.get_weights(sensors, measurements,  anchor)
-        ## TODO: Integrate weights into optimization
-        
+        if self._method == 0:
+            #### FIRST WEIGHTING OPTION (1 WEIGHT FOR ALL 10)
+            weights = self.weighter.get_weights(sensors, measurements,  anchor)
+
+        if self._method == 1:
+            #### SECOND WEIGHTING OPTION (SMOOTH OVER 20)
+            weights = self.weighter.get_all_weights(sensors, self.measurements, robot._est_path, self.last_opt, self.opt_rate)
+
+        if self._method == -1:
+            #### NO WEIGHTING
+            weights = np.ones([len(measurements), len(sensors)])
+
         out = least_squares(error_func, xo, args=([measurements, robot, sensors, anchor, self.last_opt, weights]))
         
         poses, features = parse_xo(out.x, measurements, robot, sensors)
 
-        # pt = np.array(robot._true_path)
-        # pe = np.array(robot._est_path)
-        # plt.plot(poses[:,0], poses[:,1], label="Optimized")
-        # plt.plot(pt[:,0], pt[:,1], label="True")
-        # plt.plot(pe[:,0], pe[:,1], label="Est")
-        # # plt.show()
-
-        # feats = features[1]
-        # tf = sensors[1].features
-        # plt.scatter(feats[:,0], feats[:,1])
-        # plt.scatter(tf[:,0], tf[:,1])
-        # plt.legend()
-        # plt.show()
 
         robot._est_path[self.last_opt+1:] = list(poses)
         robot._est_pose = robot._est_path[-1]
@@ -131,4 +125,12 @@ class Slamma_Jamma:
         for i in range(len(features)):
             sensors[i].features_est = features[i]
         
-        self.last_opt = len(self.measurements)
+        if self._method == 0 or self._method == -1:
+            #### FIRST WEIGHTING OPTION (1 WEIGHT FOR ALL 10)
+            self.last_opt = len(self.measurements)
+
+        # if self._method == 1 or self._method == -1:
+        if self._method == 1:
+            #### SECOND WEIGHTING OPTION (SMOOTH OVER 20)
+            if len(self.measurements) > self.opt_rate:
+                self.last_opt = len(self.measurements) - self.opt_rate

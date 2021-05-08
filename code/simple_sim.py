@@ -22,7 +22,7 @@ def run_sim(plot=False, raw_path_idx=-1, opt_method=0, seed=-1):
         np.random.seed(seed)
 
     dt  = 0.0001
-    t   = 0.0
+    # t   = 0.0
     init_pose = np.array([100,100])
     opt_freq = 10
 
@@ -32,6 +32,13 @@ def run_sim(plot=False, raw_path_idx=-1, opt_method=0, seed=-1):
     sensors.append(feature_sensor())
     # sensors.append(Base_sensor())
     sensors.append(odometry_sensor())
+    # sensors.append(GPS_sensor())
+    # sensors.append(GPS_sensor())
+    # sensors.append(GPS_sensor())
+    # sensors.append(GPS_sensor())
+    # sensors.append(odometry_sensor())
+    # sensors.append(odometry_sensor())
+    # sensors.append(odometry_sensor())
 
     ## Initialize Sensor Rates
     ## NOTE: DO NOT CHANGE ODOM_SENSOR RATE FROM 1
@@ -41,12 +48,21 @@ def run_sim(plot=False, raw_path_idx=-1, opt_method=0, seed=-1):
     sensors[0]._sense_rate = GPS_rate
     sensors[1]._sense_rate = Feature_rate
 
+    # Change sensor names
+    # sensors[3]._sensor = "gps2"
+    # sensors[4]._sensor = "gps3"
+    # sensors[5]._sensor = "gps4"
+    # sensors[6]._sensor = "gps5"
+    # sensors[7]._sensor = "odometry2"
+    # sensors[8]._sensor = "odometry3"
+    # sensors[9]._sensor = "odometry4"
+
+
 
     ## Initialize Map and features
     local_path,env,features = select_world(sensors,3, num_features=10)
-    for sen in sensors:
-        if sen._sensor == "feature":
-            sensors[1].set_values(features) 
+    # Feature sensor
+    sensors[1].set_values(features)
 
     ## Initialize Robot
     diff_control = Diff_movement()

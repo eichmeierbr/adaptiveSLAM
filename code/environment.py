@@ -19,7 +19,7 @@ class Environment():
         reg=self.sensorNoise[sensor._sensor][:,:,1]
         return reg
 
-    def makeSensorRegions(self,filename, map, quarter):
+    def makeSensorRegions(self,filename, map, num_sensor):
         noisy_std = 50
         good_std = 1
 
@@ -31,14 +31,24 @@ class Environment():
 
         # if (quarter == 0):
         #     a[0:self.map.shape[0]//2,     0:self.map.shape[1]//2,stddev]=100
-        if (quarter == 1):
-            a[self.map.shape[0]//2:self.map.shape[0],     0:self.map.shape[1]//2,stddev]=noisy_std
-        if (quarter == 2):
-            a[0:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std
-            # a[0:self.map.shape[0]//4,     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std*10
+        if (num_sensor == 1):
+            # Linearly Increasing Noise from middle to right
+            a[:,     self.map.shape[1]//2 : self.map.shape[1], stddev] = np.arange(self.map.shape[1]//2 + 1)/10
+            # print((self.map.shape[1]//2 + 1)/10)
+
+            # a[self.map.shape[0]//2 : self.map.shape[0],     0 : self.map.shape[1]//2, stddev] = noisy_std
+        if (num_sensor == 2):
+            # Linearly Decreasing Noise from middle to right
+            a[:,     self.map.shape[1]//2 : self.map.shape[1], stddev] = np.arange(self.map.shape[1]//2 + 1)[::-1]/10
+
+            # a[0 : self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1], stddev]=noisy_std
             # a[self.map.shape[0]//4:self.map.shape[0]//2,     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std/10
-        if (quarter == 3):
-            a[self.map.shape[0]//2:self.map.shape[0],     self.map.shape[1]//2:self.map.shape[1],stddev]=noisy_std
+        # if (num_sensor == 3):
+        #     # Linearly Decreasing Noise from middle to bottom
+        #     a[self.map.shape[0]//2 : self.map.shape[0], :, stddev] = (np.arange(self.map.shape[0]//2)[::-1]).reshape((self.map.shape[0]//2, 1))/10
+        #     print((self.map.shape[0]//2)/10)
+
+            # a[self.map.shape[0]//2 : self.map.shape[0],     self.map.shape[1]//2 : self.map.shape[1], stddev]=noisy_std
         np.save(filename,a)
     
     def __getitem__(self,index):
